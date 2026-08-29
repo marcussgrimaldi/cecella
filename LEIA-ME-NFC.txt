@@ -1,0 +1,22 @@
+CARTINHA NFC — PUBLICAÇÃO
+
+CONTEÚDO
+- index.html: site completo e autocontido.
+- .nojekyll: arquivo de suporte para hospedagem estática/GitHub Pages.
+- README.md: instruções de publicação.
+
+PUBLICAÇÃO RÁPIDA NO GITHUB PAGES
+1. Crie um repositório no GitHub.
+2. Envie todos os arquivos desta pasta para a raiz do repositório.
+3. Abra Settings > Pages.
+4. Em Build and deployment, escolha Deploy from a branch.
+5. Selecione a branch main e a pasta /(root), depois clique em Save.
+6. Aguarde a publicação e copie a URL HTTPS do site.
+
+NFC
+1. Grave a URL HTTPS final na tag/cartão NFC como registro NDEF do tipo URL.
+2. Não grave o HTML inteiro no NFC.
+3. Teste a URL diretamente no celular antes de gravar o cartão.
+4. Depois, aproxime o cartão do celular para testar o fluxo completo.
+
+A página já está preparada para iniciar automaticamente a experiência da cartinha quando carregar. O botão permanece disponível como alternativa.
