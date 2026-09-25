@@ -35,3 +35,19 @@ Ao carregar a página, a versão atual inicia automaticamente a sequência da ca
 ## Observação
 
 O celular pode mostrar uma notificação ou pedir uma ação antes de abrir o link NFC. Isso depende do sistema operacional e das configurações do aparelho; o site não consegue eliminar essa etapa.
+
+
+## Caixa “Se um dia você realmente precisar”
+
+A caixa de mensagem foi integrada ao `index.html` logo depois da carta principal e antes das partes de Magikarp/Zeraora. Como o site é hospedado no GitHub Pages, o envio usa o Formspree para funcionar sem abrir Gmail, Outlook ou um aplicativo de e-mail.
+
+### Configuração única
+
+1. Crie uma conta no Formspree e confirme seu e-mail.
+2. No painel, crie um **New Form**.
+3. Configure o seu endereço como **Target Email** desse formulário.
+4. Abra a área **Integration** e copie o **Form ID** do endpoint do formulário.
+5. No `index.html`, procure `https://formspree.io/f/mzezaodd` e substitua somente `mzezaodd` pelo ID recebido.
+6. Faça o commit/push do `index.html` para o GitHub Pages.
+
+O formulário é enviado por AJAX, então a página não muda de endereço nem abre um aplicativo de e-mail. As submissões também ficam disponíveis no painel do Formspree.
