@@ -210,6 +210,81 @@ button{
 @media(prefers-reduced-motion:reduce){.summon,.summon *,.card.summoned{animation:none!important;transition:none!important}.summon{display:none!important}}
 
 /* ===== Última surpresa: Magikarp ===== */
+
+/* ===== Caixa de último recurso ===== */
+.last-resort{
+  width:min(100%, 520px);
+  margin:34px auto 28px;
+  padding:22px 22px 20px;
+  box-sizing:border-box;
+  background:rgba(255,255,255,.10);
+  border:1px solid rgba(24,51,62,.30);
+  border-radius:14px;
+  box-shadow:0 10px 28px rgba(0,0,0,.10);
+}
+.last-resort h2{
+  margin:0 0 10px;
+  font-size:clamp(20px,4.2vw,25px);
+  font-weight:normal;
+  color:#18333e;
+}
+.last-resort p{
+  margin:0 0 16px;
+  font-size:14px;
+  line-height:1.65;
+  color:#18333e;
+}
+.last-resort form{display:flex;flex-direction:column;gap:10px}
+.last-resort textarea{
+  width:100%;
+  min-height:125px;
+  resize:vertical;
+  box-sizing:border-box;
+  padding:12px 13px;
+  border:1px solid rgba(24,51,62,.35);
+  border-radius:10px;
+  background:rgba(255,255,255,.72);
+  color:#18333e;
+  font:inherit;
+  line-height:1.5;
+  outline:none;
+}
+.last-resort textarea:focus{
+  border-color:#18333e;
+  box-shadow:0 0 0 3px rgba(158,234,255,.45);
+}
+.last-resort button{
+  align-self:flex-end;
+  padding:9px 17px;
+  border:1px solid #18333e;
+  border-radius:8px;
+  background:rgba(255,255,255,.38);
+  color:#18333e;
+  font:inherit;
+  cursor:pointer;
+  transition:background .18s ease, transform .18s ease;
+}
+.last-resort button:hover{background:rgba(255,255,255,.65)}
+.last-resort button:active{transform:translateY(1px)}
+.last-resort button:disabled{opacity:.55;cursor:wait}
+.last-resort button:focus-visible{outline:3px solid #9eeaff;outline-offset:3px}
+.last-resort-status{
+  min-height:20px;
+  margin:1px 0 0;
+  font-size:12px;
+  line-height:1.45;
+  color:#18333e;
+}
+.last-resort-status.success{font-weight:bold}
+.last-resort-status.error{font-weight:bold}
+.sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
+.last-resort-hp{position:absolute!important;left:-9999px!important;width:1px!important;height:1px!important;overflow:hidden!important}
+@media(max-width:480px){
+  .last-resort{margin:28px auto 24px;padding:19px 16px 17px}
+  .last-resort p{font-size:13px;line-height:1.6}
+  .last-resort button{width:100%;align-self:stretch}
+}
+
 .magikarp-secret{
   margin-top:22px;
   padding:20px 16px 18px;
@@ -546,6 +621,24 @@ button{
       <div class="signature">Marcus</div>
     </section>
 
+
+    <section class="last-resort" aria-labelledby="lastResortTitle">
+      <h2 id="lastResortTitle">Se um dia você realmente precisar</h2>
+      <p>Isso não tá aqui pra você mandar um “oi”, puxar assunto ou simplesmente matar a saudade.</p>
+      <p>É só um último recurso.</p>
+      <p>Se algum dia você mudar de ideia sobre alguma coisa, perceber que talvez tenha deixado passar algo importante, ou simplesmente chegar num momento em que você realmente precise falar comigo, pode deixar uma mensagem aqui.</p>
+      <p>Não precisa usar isso se não for algo que você realmente sente que precisa me dizer.</p>
+
+      <!-- Formspree configurado: endpoint do formulário de último recurso. -->
+      <form id="lastResortForm" action="https://formspree.io/f/mzezaodd" method="POST">
+        <label class="sr-only" for="lastResortMessage">Sua mensagem</label>
+        <textarea id="lastResortMessage" name="message" maxlength="3000" placeholder="Escreva aqui, se realmente precisar." required></textarea>
+        <input class="last-resort-hp" type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <button type="submit" id="lastResortSubmit">Enviar</button>
+        <p class="last-resort-status" id="lastResortStatus" role="status" aria-live="polite"></p>
+      </form>
+    </section>
+
     <section class="ability-card" aria-label="Habilidade Última Mensagem">
       <div class="ability-heading">
         <div class="ability-label"><span>Habilidade</span></div>
@@ -687,6 +780,46 @@ function closeCard(){
 }
 document.querySelector('.ball-button').addEventListener('click', releaseCard);
 document.querySelector('.ball-button').addEventListener('keydown', e=>{ if(e.key==='Enter'||e.key===' ') { e.preventDefault(); releaseCard(); }});
+const lastResortForm = document.getElementById('lastResortForm');
+const lastResortStatus = document.getElementById('lastResortStatus');
+const lastResortSubmit = document.getElementById('lastResortSubmit');
+
+lastResortForm.addEventListener('submit', async (event)=>{
+  event.preventDefault();
+
+  if(lastResortForm._gotcha && lastResortForm._gotcha.value) return;
+
+  lastResortStatus.textContent = 'Enviando...';
+  lastResortStatus.className = 'last-resort-status';
+  lastResortSubmit.disabled = true;
+
+  try{
+    const response = await fetch(lastResortForm.action, {
+      method: 'POST',
+      body: new FormData(lastResortForm),
+      headers: {Accept: 'application/json'}
+    });
+
+    if(!response.ok){
+      let message = 'Não consegui enviar agora. Se quiser, tenta de novo mais tarde.';
+      try{
+        const data = await response.json();
+        if(data.errors?.length) message = data.errors.map(error => error.message).join(' ');
+      }catch(_){}
+      throw new Error(message);
+    }
+
+    lastResortForm.reset();
+    lastResortStatus.textContent = 'Mensagem enviada.';
+    lastResortStatus.className = 'last-resort-status success';
+  }catch(error){
+    lastResortStatus.textContent = error.message || 'Não consegui enviar agora. Tenta de novo mais tarde.';
+    lastResortStatus.className = 'last-resort-status error';
+  }finally{
+    lastResortSubmit.disabled = false;
+  }
+});
+
 const magikarpButton = document.getElementById('magikarpButton');
 const magikarpExtra = document.getElementById('magikarpExtra');
 
